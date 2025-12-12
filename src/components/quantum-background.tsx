@@ -9,7 +9,10 @@ export default function QuantumBackground() {
   const [mounted, setMounted] = useState(false);
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
   const animationRef = useRef<number>(0);
-  const { theme } = useTheme();
+  const { theme, systemTheme } = useTheme();
+
+  // Determine if dark mode based on theme and system preference
+  const isDarkMode = mounted ? (theme === "dark" || (theme === "system" && systemTheme === "dark")) : true;
 
   useEffect(() => {
     setMounted(true);
@@ -31,7 +34,7 @@ export default function QuantumBackground() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const isDark = theme === "dark";
+    const isDark = isDarkMode;
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -244,12 +247,12 @@ export default function QuantumBackground() {
       window.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(animationRef.current);
     };
-  }, [isLowPower, theme]);
+  }, [isLowPower, isDarkMode, mounted]);
 
   if (!mounted) {
     return (
       <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-slate-950 to-cyan-950 dark:from-indigo-950 dark:via-slate-950 dark:to-cyan-950" />
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-slate-950 to-cyan-950" />
       </div>
     );
   }
@@ -266,7 +269,7 @@ export default function QuantumBackground() {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-slate-50 to-cyan-50 dark:from-indigo-950 dark:via-slate-950 dark:to-cyan-950 transition-colors duration-500" />
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ mixBlendMode: theme === "dark" ? "screen" : "multiply" }} />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ mixBlendMode: isDarkMode ? "screen" : "multiply" }} />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(0,150,200,0.05),transparent)] dark:bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(0,240,255,0.08),transparent)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_100%_at_50%_50%,transparent_40%,rgba(248,250,252,0.3))] dark:bg-[radial-gradient(ellipse_100%_100%_at_50%_50%,transparent_40%,rgba(10,6,32,0.5))]" />
     </div>
