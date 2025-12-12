@@ -35,7 +35,6 @@ Thumbs.db
 .DS_Store
 
 # Project specific
-public/portrait.jpg
 public/project*.jpg
 public/research-slide-deck.pdf
 public/resume.pdf
